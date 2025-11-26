@@ -269,6 +269,15 @@ function templateHTML(title, list, body, control, sort, limit, page, loggedInUse
             .pagination a:hover {
                 color: #1d4ed8;
             }
+
+            .prose {
+                /* 단어가 넘칠 때 자동으로 줄바꿈 (길이가 긴 URL 등에 유용) */
+                word-break: break-word;
+                /* 모든 단어를 띄어쓰기 없이 연결하여도 넘칠 때 강제 줄바꿈 */
+                overflow-wrap: break-word; 
+                /* 오버플로우 스크롤 숨김(필요 시) */
+                /* overflow-x: auto; */ 
+            }
         </style>
     </head>
     <body class="p-4 md:p-8">
