@@ -128,24 +128,19 @@ function templateList(topics, page, limit, sort) {
     for (let i = 0; i < 3; i++) {
         optionRows += `
             <div class="grid grid-cols-2 gap-4">
-                <!-- 1열: 정렬 옵션 -->
                 <div>${sortLinks[i]}</div>
-                <!-- 2열: 보기 옵션 -->
                 <div>${limitLinks[i]}</div>
             </div>
         `;
     }
 
     const listControls = `
-    <!-- 정렬/보기 컨트롤 (2열 그리드 스타일) -->
     <div class="mb-6 p-4 border border-indigo-200 rounded-xl bg-indigo-50 shadow-md max-w-sm mx-auto sm:max-w-none">
-        <!-- 컬럼 헤더: 정렬, 보기 -->
         <div class="grid grid-cols-2 gap-4 mb-2 pb-2 border-b-2 border-indigo-300">
             <span class="text-indigo-800 font-extrabold text-center text-lg">정렬</span>
             <span class="text-indigo-800 font-extrabold text-center text-lg">보기</span>
         </div>
         
-        <!-- 옵션 행들 -->
         <div class="space-y-1">
             ${optionRows}
         </div>
@@ -270,13 +265,46 @@ function templateHTML(title, list, body, control, sort, limit, page, loggedInUse
                 color: #1d4ed8;
             }
 
+            /* 💡 수정/추가: 마크다운 가독성 및 줄바꿈 CSS */
             .prose {
-                /* 단어가 넘칠 때 자동으로 줄바꿈 (길이가 긴 URL 등에 유용) */
-                word-break: break-word;
-                /* 모든 단어를 띄어쓰기 없이 연결하여도 넘칠 때 강제 줄바꿈 */
+                /* 1. 자동 줄바꿈 문제 해결 */
+                word-break: break-word; 
                 overflow-wrap: break-word; 
-                /* 오버플로우 스크롤 숨김(필요 시) */
-                /* overflow-x: auto; */ 
+                line-height: 1.6; /* 텍스트 가독성 향상 */
+            }
+            /* 마크다운 제목 스타일 */
+            .prose h1, .prose h2, .prose h3 { 
+                font-weight: bold; 
+                margin-top: 1.5rem; 
+                margin-bottom: 0.75rem;
+                padding-bottom: 0.3rem;
+                border-bottom: 1px solid #e2e8f0;
+            }
+            .prose h1 { font-size: 2em; }
+            .prose h2 { font-size: 1.5em; border-bottom: 2px solid #e2e8f0; }
+            .prose h3 { font-size: 1.25em; }
+            /* 단락 스타일 */
+            .prose p { margin-bottom: 1rem; }
+            /* 목록 스타일 */
+            .prose ul, .prose ol { 
+                margin-left: 2rem; 
+                margin-bottom: 1rem; 
+                padding-left: 0;
+            }
+            .prose ul { list-style-type: disc; }
+            .prose ol { list-style-type: decimal; }
+            /* 코드 블록 스타일 */
+            .prose pre {
+                background-color: #f4f4f5; /* gray-100 */
+                padding: 1rem;
+                border-radius: 0.375rem; /* rounded-md */
+                overflow-x: auto;
+            }
+            .prose code {
+                font-family: monospace;
+                background-color: #fee2e2; /* red-100 */
+                padding: 0.125rem 0.25rem;
+                border-radius: 0.25rem;
             }
         </style>
     </head>
@@ -300,7 +328,7 @@ function templateHTML(title, list, body, control, sort, limit, page, loggedInUse
                     ${list}
                 </div>
                 
-                <div class="flex-1 bg-white p-6 rounded-lg shadow-lg min-h-[400px]">
+                <div class="flex-1 bg-white p-6 rounded-lg shadow-lg min-h-[400px] min-w-0">
                     <section>
                         ${body}
                         <div class="mt-6 pt-4 border-t border-gray-200 flex justify-end space-x-4">
@@ -368,7 +396,7 @@ const app = http.createServer((request, response) => {
                 bodyHtml = `
                     <h2 class="text-2xl font-bold mb-4 text-gray-800">${title}</h2>
                     <p class="text-sm text-gray-500 mb-4">작성자: ${authorName} | 작성일: ${new Date(topic.created_at).toLocaleString('ko-KR')}</p>
-                    <div class="prose text-gray-700">${markdownContent}</div>
+                    <div class="prose max-w-none text-gray-700">${markdownContent}</div>
                 `;
                 
                 // 수정/삭제 버튼 제어
