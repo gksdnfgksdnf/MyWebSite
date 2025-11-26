@@ -368,7 +368,7 @@ const app = http.createServer((request, response) => {
                 bodyHtml = `
                     <h2 class="text-2xl font-bold mb-4 text-gray-800">${title}</h2>
                     <p class="text-sm text-gray-500 mb-4">작성자: ${authorName} | 작성일: ${new Date(topic.created_at).toLocaleString('ko-KR')}</p>
-                    <div class="prose max-w-none text-gray-700">${markdownContent}</div>
+                    <div class="prose text-gray-700">${markdownContent}</div>
                 `;
                 
                 // 수정/삭제 버튼 제어
