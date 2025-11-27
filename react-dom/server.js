@@ -66,7 +66,7 @@ function parseCookies(request) {
     const list = {};
     const cookieHeader = request.headers.cookie;
     if (!cookieHeader) return list;
-    cookieHeader.split(';').forEach(function(cookie) {
+    cookieHeader.split(';').forEach(function (cookie) {
         let parts = cookie.split('=');
         list[parts[0].trim()] = parts[1] ? decodeURIComponent(parts[1].trim()) : '';
     });
@@ -144,7 +144,7 @@ function templateList(topics, page, limit, sort) {
             <span class="text-indigo-800 font-extrabold text-center text-lg">정렬</span>
             <span class="text-indigo-800 font-extrabold text-center text-lg">보기</span>
         </div>
-
+        
         <!-- 옵션 행들 -->
         <div class="space-y-1">
             ${optionRows}
@@ -232,7 +232,7 @@ function templateHTML(title, list, body, control, sort, limit, page, loggedInUse
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
             body { font-family: 'Noto Sans KR', sans-serif; background-color: #f1f5f9; }
-
+            
             .list-container {
                 flex-basis: 300px;
                 flex-shrink: 0;
@@ -256,7 +256,7 @@ function templateHTML(title, list, body, control, sort, limit, page, loggedInUse
             }
             .list-item { transition: background-color 0.2s; }
             .list-item:hover { background-color: #f1f5f9; }
-
+            
             .pagination a {
                 color: #2563eb;
                 transition: color 0.15s;
@@ -268,6 +268,15 @@ function templateHTML(title, list, body, control, sort, limit, page, loggedInUse
             }
             .pagination a:hover {
                 color: #1d4ed8;
+            }
+
+            .prose {
+                /* 단어가 넘칠 때 자동으로 줄바꿈 (길이가 긴 URL 등에 유용) */
+                word-break: break-word;
+                /* 모든 단어를 띄어쓰기 없이 연결하여도 넘칠 때 강제 줄바꿈 */
+                overflow-wrap: break-word; 
+                /* 오버플로우 스크롤 숨김(필요 시) */
+                /* overflow-x: auto; */ 
             }
         </style>
     </head>
@@ -290,7 +299,7 @@ function templateHTML(title, list, body, control, sort, limit, page, loggedInUse
                     </div>
                     ${list}
                 </div>
-
+                
                 <div class="flex-1 bg-white p-6 rounded-lg shadow-lg min-h-[400px]">
                     <section>
                         ${body}
@@ -381,8 +390,8 @@ const app = http.createServer((request, response) => {
                 bodyHtml = '<h2 class="text-xl font-semibold mb-2">게시글을 찾을 수 없습니다.</h2>';
             }
         } else {
-             // 메인 페이지 소개
-             bodyHtml = `
+            // 메인 페이지 소개
+            bodyHtml = `
                 <h2 class="text-xl font-semibold mb-2 text-gray-800">서비스 소개</h2>
                 <p class="text-gray-600">${description}</p>
              `;
@@ -535,11 +544,11 @@ const app = http.createServer((request, response) => {
 
     } else if (request.method === 'POST') {
         let body = '';
-        request.on('data', function(data) {
+        request.on('data', function (data) {
             body += data;
         });
 
-        request.on('end', async function() {
+        request.on('end', async function () {
             let post = {};
             try {
                 post = qs.parse(body);
@@ -659,10 +668,10 @@ const app = http.createServer((request, response) => {
                 }
 
             } catch (error) {
-                 console.error('POST 처리 중 오류 발생:', error);
-                 response.writeHead(500, {'Content-Type': 'text/html; charset=utf-8'});
+                console.error('POST 처리 중 오류 발생:', error);
+                response.writeHead(500, { 'Content-Type': 'text/html; charset=utf-8' });
 
-                 const errorBody = `
+                const errorBody = `
                     <div class="error-container">
                         <h2>💥 500 Internal Server Error</h2>
                         <p>데이터 처리 중 치명적인 서버 오류가 발생했습니다.</p>
@@ -671,8 +680,8 @@ const app = http.createServer((request, response) => {
                     </div>
                  `;
 
-                 const errorHtml = templateHTML('500 Error', emptyListHtml, errorBody, '', 'latest', DEFAULT_ITEMS_PER_PAGE, 1, null);
-                 response.end(errorHtml);
+                const errorHtml = templateHTML('500 Error', emptyListHtml, errorBody, '', 'latest', DEFAULT_ITEMS_PER_PAGE, 1, null);
+                response.end(errorHtml);
             }
         });
     } else {
