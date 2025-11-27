@@ -19,7 +19,7 @@ let topics = [];
 let users = [];
 let nextId = 1;
 let nextUserId = 1;
-const sessions = {}; 
+const sessions = {};
 
 
 // --- 헬퍼 함수: 데이터 로드/저장 통합 ---
@@ -108,7 +108,7 @@ function sortTopics(topicArray, sort) {
 // 목록 UI 생성 함수 (보기 옵션, 정렬 옵션 포함)
 function templateList(topics, page, limit, sort) {
     const baseQuery = `page=${page}&limit=${limit}&sort=${sort}`;
-    
+
     // 정렬 옵션 링크들을 배열로 생성합니다.
     const sortOptions = { latest: '최신순', oldest: '오래된순', title_asc: '제목순 (A-Z)' };
     const sortLinks = Object.entries(sortOptions).map(([key, value]) => {
@@ -144,7 +144,7 @@ function templateList(topics, page, limit, sort) {
             <span class="text-indigo-800 font-extrabold text-center text-lg">정렬</span>
             <span class="text-indigo-800 font-extrabold text-center text-lg">보기</span>
         </div>
-        
+
         <!-- 옵션 행들 -->
         <div class="space-y-1">
             ${optionRows}
@@ -155,7 +155,7 @@ function templateList(topics, page, limit, sort) {
     // 목록 항목
     const listItems = topics.map(topic => {
         // NOTE: 'users' 변수는 이 함수 외부의 전역 스코프에 정의되어 있어야 합니다.
-        const authorUser = users.find(u => u.id === topic.author); 
+        const authorUser = users.find(u => u.id === topic.author);
         const authorName = authorUser ? authorUser.nickname : '시스템';
         return `
             <li class="list-item border-b border-gray-100 last:border-b-0 p-3 hover:bg-gray-50 rounded-md transition-colors duration-150">
@@ -193,7 +193,7 @@ function templatePagination(totalTopics, page, limit, sort) {
     const endPage = Math.min(startPage + pageGroupSize - 1, totalPages);
 
     const baseLink = (p) => `/?page=${p}&limit=${limit}&sort=${sort}`;
-    
+
     if (currentGroup > 1) {
         paginationHtml += `<a href="${baseLink(startPage - 1)}" class="p-2">&laquo;</a>`;
     }
@@ -232,7 +232,7 @@ function templateHTML(title, list, body, control, sort, limit, page, loggedInUse
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
             body { font-family: 'Noto Sans KR', sans-serif; background-color: #f1f5f9; }
-            
+
             .list-container {
                 flex-basis: 300px;
                 flex-shrink: 0;
@@ -256,7 +256,7 @@ function templateHTML(title, list, body, control, sort, limit, page, loggedInUse
             }
             .list-item { transition: background-color 0.2s; }
             .list-item:hover { background-color: #f1f5f9; }
-            
+
             .pagination a {
                 color: #2563eb;
                 transition: color 0.15s;
@@ -290,7 +290,7 @@ function templateHTML(title, list, body, control, sort, limit, page, loggedInUse
                     </div>
                     ${list}
                 </div>
-                
+
                 <div class="flex-1 bg-white p-6 rounded-lg shadow-lg min-h-[400px]">
                     <section>
                         ${body}
@@ -315,16 +315,16 @@ const app = http.createServer((request, response) => {
     const pathName = parsedUrl.pathname;
     const query = parsedUrl.query;
     const loggedInUser = getLoggedInUser(request);
-    
+
     // 빈 목록 HTML 생성 (템플릿용)
-    const emptyListHtml = templateList([], 1, DEFAULT_ITEMS_PER_PAGE, 'latest'); 
+    const emptyListHtml = templateList([], 1, DEFAULT_ITEMS_PER_PAGE, 'latest');
 
     if (pathName === '/') {
         // 페이지네이션 및 정렬 파라미터 처리 (상태 유지)
         const topicId = query.id;
-        const page = parseInt(query.page) || 1; 
-        const limit = parseInt(query.limit) || DEFAULT_ITEMS_PER_PAGE; 
-        const sort = query.sort || 'latest'; 
+        const page = parseInt(query.page) || 1;
+        const limit = parseInt(query.limit) || DEFAULT_ITEMS_PER_PAGE;
+        const sort = query.sort || 'latest';
 
         // 1. 정렬
         const sortedTopics = sortTopics(topics, sort);
@@ -344,9 +344,9 @@ const app = http.createServer((request, response) => {
         // 3. 페이지네이션 및 목록 생성
         const paginationHtml = templatePagination(totalTopics, page, limit, sort);
         const list = templateList(pagedTopics, page, limit, sort);
-        
+
         listHtml = paginationHtml + list;
-        
+
         if (topicId) {
             // 상세 보기
             const topic = topics.find(t => t.id === parseInt(topicId));
@@ -361,7 +361,7 @@ const app = http.createServer((request, response) => {
                     <p class="text-sm text-gray-500 mb-4">작성자: ${authorName} | 작성일: ${new Date(topic.created_at).toLocaleString('ko-KR')}</p>
                     <div class="prose max-w-none text-gray-700">${markdownContent}</div>
                 `;
-                
+
                 // 수정/삭제 버튼 제어
                 const baseQuery = `page=${page}&limit=${limit}&sort=${sort}`;
                 if (loggedInUser && loggedInUser.id === topic.author) {
@@ -398,12 +398,12 @@ const app = http.createServer((request, response) => {
             response.end();
             return;
         }
-        
+
         // 쿼리 파라미터를 그대로 폼에 숨겨서 POST에 전달
-        const page = query.page || 1; 
-        const limit = query.limit || DEFAULT_ITEMS_PER_PAGE; 
-        const sort = query.sort || 'latest'; 
-        
+        const page = query.page || 1;
+        const limit = query.limit || DEFAULT_ITEMS_PER_PAGE;
+        const sort = query.sort || 'latest';
+
         const bodyHtml = `
             <form action="/create_process" method="post" class="space-y-4">
                 <input type="hidden" name="page" value="${page}">
@@ -435,17 +435,17 @@ const app = http.createServer((request, response) => {
 
         const topicId = parseInt(query.id);
         const topic = topics.find(t => t.id === topicId);
-        
+
         if (!topic || topic.author !== loggedInUser.id) {
             response.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
             response.end(templateHTML('403', emptyListHtml, '<h1>403 Forbidden</h1><p>수정 권한이 없습니다.</p>', '', query.sort, query.limit, query.page, loggedInUser));
             return;
         }
-        
+
         // 쿼리 파라미터를 그대로 폼에 숨겨서 POST에 전달
-        const page = query.page || 1; 
-        const limit = query.limit || DEFAULT_ITEMS_PER_PAGE; 
-        const sort = query.sort || 'latest'; 
+        const page = query.page || 1;
+        const limit = query.limit || DEFAULT_ITEMS_PER_PAGE;
+        const sort = query.sort || 'latest';
 
         const bodyHtml = `
             <form action="/update_process" method="post" class="space-y-4">
@@ -526,8 +526,8 @@ const app = http.createServer((request, response) => {
         if (sessionId) {
             delete sessions[sessionId];
         }
-        
-        response.writeHead(302, { 
+
+        response.writeHead(302, {
             'Location': '/',
             'Set-Cookie': `sessionId=; Path=/; Max-Age=0` // 쿠키 만료
         });
@@ -552,7 +552,7 @@ const app = http.createServer((request, response) => {
                 const sort = post.sort || 'latest';
                 // 리다이렉트를 위한 쿼리 스트링 (id 제외)
                 const listBaseQuery = `page=${page}&limit=${limit}&sort=${sort}`;
-                
+
                 if (pathName === '/create_process') {
                     if (!postLoggedInUser) throw new Error('Not logged in');
                     if (isEmptyOrWhitespace(post.title) || isEmptyOrWhitespace(post.description)) {
@@ -560,18 +560,18 @@ const app = http.createServer((request, response) => {
                         response.end(templateHTML('오류', emptyListHtml, '<h1>400 Bad Request</h1><p>제목과 내용을 모두 입력해 주세요.</p>', '', sort, limit, page, postLoggedInUser));
                         return;
                     }
-                    
+
                     const newTopic = {
                         id: nextId++,
                         title: post.title,
                         description: post.description,
                         created_at: new Date().toISOString(),
                         updated_at: new Date().toISOString(),
-                        author: postLoggedInUser.id 
+                        author: postLoggedInUser.id
                     };
                     topics.push(newTopic);
                     saveTopics();
-                    
+
                     // 새 글 작성 후 1페이지로 돌아가되, limit/sort는 유지
                     response.writeHead(302, { 'Location': `/?${listBaseQuery}` });
                     response.end();
@@ -580,22 +580,22 @@ const app = http.createServer((request, response) => {
                     if (!postLoggedInUser) throw new Error('Not logged in');
                     const idToUpdate = parseInt(post.id);
                     const topicIndex = topics.findIndex(t => t.id === idToUpdate);
-                    
+
                     if (topicIndex === -1 || topics[topicIndex].author !== postLoggedInUser.id) {
                         response.writeHead(403, { 'Content-Type': 'text/html; charset=utf-8' });
                         response.end(templateHTML('403', emptyListHtml, '<h1>403 Forbidden</h1><p>수정 권한이 없습니다.</p>', '', sort, limit, page, postLoggedInUser));
                         return;
                     }
-                    
+
                     topics[topicIndex].title = post.title;
                     topics[topicIndex].description = post.description;
                     topics[topicIndex].updated_at = new Date().toISOString();
                     saveTopics();
-                    
+
                     // 수정 후 해당 토픽 페이지로 돌아가되, 페이지네이션 상태 고정
                     response.writeHead(302, { 'Location': `/?id=${idToUpdate}&${listBaseQuery}` });
                     response.end();
-                    
+
                 } else if (pathName === '/delete_process') {
                     if (!postLoggedInUser) throw new Error('Not logged in');
                     const idToDelete = parseInt(post.id);
@@ -613,7 +613,7 @@ const app = http.createServer((request, response) => {
                     // 삭제 후 목록 페이지로 돌아가되, limit/sort는 유지
                     response.writeHead(302, { 'Location': `/?${listBaseQuery}` });
                     response.end();
-                    
+
                 } else if (pathName === '/register_process') {
                     if (isEmptyOrWhitespace(post.username) || isEmptyOrWhitespace(post.password) || isEmptyOrWhitespace(post.nickname)) {
                         response.writeHead(400, { 'Content-Type': 'text/html; charset=utf-8' });
@@ -630,7 +630,7 @@ const app = http.createServer((request, response) => {
                     const newUser = {
                         id: nextUserId++,
                         username: post.username,
-                        password: post.password, 
+                        password: post.password,
                         nickname: post.nickname
                     };
                     users.push(newUser);
@@ -647,7 +647,7 @@ const app = http.createServer((request, response) => {
                         const sessionId = generateSessionId();
                         sessions[sessionId] = user.id;
 
-                        response.writeHead(302, { 
+                        response.writeHead(302, {
                             'Location': '/',
                             'Set-Cookie': `sessionId=${sessionId}; Path=/; HttpOnly; Max-Age=${60 * 60 * 24 * 30}` // 30일 세션
                         });
@@ -660,8 +660,8 @@ const app = http.createServer((request, response) => {
 
             } catch (error) {
                  console.error('POST 처리 중 오류 발생:', error);
-                 response.writeHead(500, {'Content-Type': 'text/html; charset=utf-8'}); 
-                 
+                 response.writeHead(500, {'Content-Type': 'text/html; charset=utf-8'});
+
                  const errorBody = `
                     <div class="error-container">
                         <h2>💥 500 Internal Server Error</h2>
@@ -670,7 +670,7 @@ const app = http.createServer((request, response) => {
                         <p><a href="/">홈으로 돌아가기</a></p>
                     </div>
                  `;
-                 
+
                  const errorHtml = templateHTML('500 Error', emptyListHtml, errorBody, '', 'latest', DEFAULT_ITEMS_PER_PAGE, 1, null);
                  response.end(errorHtml);
             }
